@@ -146,6 +146,25 @@ fecharMenuAoClicarFora(event) {
   },
 
   async adicionarContrato() {
+    // Verifica se já existe um contrato com o mesmo número
+    const contratoExistente = this.contratos.find(
+      contrato => contrato.numeroContrato === this.novoContrato.numeroContrato
+    );
+
+    if (contratoExistente) {
+      alert('Já existe um contrato com este número. Por favor, insira um número único.');
+      return; // Interrompe a execução do método
+    }
+
+    // Verifica se a data de término é anterior à data de início
+    const inicioPrazo = new Date(this.novoContrato.inicioPrazo);
+    const terminoPrazo = new Date(this.novoContrato.terminoPrazo);
+
+    if (terminoPrazo < inicioPrazo) {
+      alert('A data de término não pode ser anterior à data de início.');
+      return; // Interrompe a execução do método
+    }
+
     // Garantir que o valor seja tratado como string antes de usar .replace
     if (this.novoContrato.valor !== undefined && this.novoContrato.valor !== null) {
       // Converte o valor para string, se não for

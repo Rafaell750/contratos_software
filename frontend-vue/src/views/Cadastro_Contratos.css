@@ -276,6 +276,14 @@ body {
   border: none;
   font-size: 18px;
   cursor: pointer;
+  padding: 5px; /* Adiciona um pouco de espaço ao redor do ícone */
+  border-radius: 4px; /* Bordas arredondadas */
+  transition: background-color 0.2s; /* Transição suave */
+}
+
+/* Efeito hover para o botão de três pontinhos */
+.botao-menu:hover {
+  background-color: #d4c5c5; /* Cor de fundo ao passar o mouse */
 }
 
 /* Estilo para o dropdown de opções (Editar, Deletar, Informação) */

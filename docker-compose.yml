@@ -1,18 +1,20 @@
 version: '3.8'
 
 services:
-  backend:
-    build: ./backend
-    ports:
-      - "5000:5000"
-    volumes:
-      - ./backend:/app
-
   frontend:
-    build: ./frontend-vue
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "8080:8080"
-    volumes:
-      - ./frontend-vue:/app
-    stdin_open: true
-    tty: true
+      - "8080:8080"  # Mapeia a porta 8080 do container para a porta 8080 da máquina
+    container_name: frontend
+    restart: always
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "5001:5001"  # Mapeia a porta 5001 do container para a porta 5001 da máquina
+    container_name: backend
+    restart: always

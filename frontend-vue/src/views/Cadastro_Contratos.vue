@@ -95,7 +95,7 @@
       </div>   
 
     <!-- Lista de Contratos Cadastrados -->
-    <h2 class="subtitulo">Contratos Cadastrados</h2>
+    <h2 class="subtitulo">Lista de Contratos:</h2>
     <div class="lista-contratos">
       <div v-for="contrato in contratos" :key="contrato._id" class="card-contrato">
         <div class="card-header" :class="`status-${calcularStatus(contrato.terminoPrazo).toLowerCase().replace(/ /g, '-')}`">
