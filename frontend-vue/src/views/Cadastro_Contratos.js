@@ -98,15 +98,22 @@ fecharMenuAoClicarFora(event) {
 
   // Método para confirmar a deleção
   async confirmarDelecao() {
-    if (this.contratoParaDeletar) {
+    if (!this.contratoParaDeletar) {
+      console.error('Nenhum contrato selecionado para deletar.');
+      return;
+    }
+  
+    try {
       await deleteContrato(this.contratoParaDeletar); // Deleta o contrato
       this.contratos = await getContratos(); // Atualiza a lista de contratos
       this.fecharModalConfirmacaoDeletar(); // Fecha a modal de confirmação
-
+  
       // Limpa o contrato selecionado se ele foi deletado
       if (this.contratoSelecionado && this.contratoSelecionado._id === this.contratoParaDeletar._id) {
         this.contratoSelecionado = null;
       }
+    } catch (error) {
+      console.error('Erro ao deletar contrato:', error);
     }
   },
 
@@ -146,11 +153,13 @@ fecharMenuAoClicarFora(event) {
   },
 
   async adicionarContrato() {
-    // Verifica se já existe um contrato com o mesmo número
+    // Verifica se já existe um contrato com o mesmo número, ignorando o contrato atual (se estiver editando)
     const contratoExistente = this.contratos.find(
-      contrato => contrato.numeroContrato === this.novoContrato.numeroContrato
+      contrato =>
+        contrato.numeroContrato === this.novoContrato.numeroContrato &&
+        (!this.contratoSelecionado || contrato._id !== this.contratoSelecionado._id)
     );
-
+  
     if (contratoExistente) {
       alert('Já existe um contrato com este número. Por favor, insira um número único.');
       return; // Interrompe a execução do método
@@ -194,9 +203,12 @@ fecharMenuAoClicarFora(event) {
       this.contratos = await getContratos(); // Atualiza a lista de contratos
       },
 
-    formatarData(data) {
-      return data ? new Date(data).toLocaleDateString('pt-BR') : '-';
-    },
+      formatarData(data) {
+        if (!data) return '-';
+        
+        const dataObj = new Date(data);
+        return dataObj.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+      },
     formatarValor(valor) {
       if (typeof valor === 'number') {
         return valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -205,6 +217,7 @@ fecharMenuAoClicarFora(event) {
       } else {
         return '0,00'; // Retorna um valor padrão se o valor for inválido
       }
+      
     },
 
     // Alterna o menu de opções (Editar/Deletar)

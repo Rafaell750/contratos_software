@@ -18,7 +18,9 @@ export const addContrato = async (contrato) => {
 export const getContratos = async () => {
   try {
     const response = await db.allDocs({ include_docs: true });
-    return response.rows.map(row => row.doc);
+    const contratos = response.rows.map(row => row.doc);
+    console.log(contratos); // Verifique o formato das datas aqui
+    return contratos;
   } catch (error) {
     console.error('Erro ao buscar contratos:', error);
     throw error;

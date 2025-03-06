@@ -29,6 +29,10 @@
             <input v-model="novoContrato.empresas" id="empresas" />
           </div>
           <div class="campo">
+            <label for="valor">Valor (R$):</label>
+            <input v-model="novoContrato.valor" @input="formatarEntradaValor" id="valor" />
+          </div>
+          <div class="campo">
             <label for="inicioPrazo">Início do Prazo:</label>
             <input v-model="novoContrato.inicioPrazo" type="date" id="inicioPrazo" />
           </div>
@@ -36,10 +40,7 @@
             <label for="terminoPrazo">Término do Prazo:</label>
             <input v-model="novoContrato.terminoPrazo" type="date" id="terminoPrazo" />
           </div>
-          <div class="campo">
-            <label for="valor">Valor:</label>
-            <input v-model="novoContrato.valor" @input="formatarEntradaValor" id="valor" />
-          </div>
+
           <div class="campo">
             <label for="situacao">Situação:</label>
             <select v-model="novoContrato.situacao" id="situacao">
@@ -64,7 +65,7 @@
 
     <!-- Modal de Informação -->
     <div v-if="modalInformacaoAberta" class="modal" :style="{ zIndex: modalInformacaoAberta ? 1001 : 0 }">
-      <div class="modal-conteudo">
+      <div class="modal-conteudo modal-informacao">
         <span class="fechar" @click="fecharModalInformacao">&times;</span>
         <h2 class="modal-titulo">Informações Adicionais</h2>
         <!-- Formulário de Informação -->
@@ -119,6 +120,7 @@
         <div class="card-body">
           <p><strong>Responsável:</strong> {{ contrato.responsavel }}</p>
           <p><strong>Empresas:</strong> {{ contrato.empresas }}</p>
+          <p><strong>Valor:</strong> R$ {{ formatarValor(contrato.valor) }}</p>
           <p><strong>Início do Prazo:</strong> {{ formatarData(contrato.inicioPrazo) }}</p>
 
           <p>
@@ -129,7 +131,7 @@
             </span>
           </p>
 
-          <p><strong>Valor:</strong> R$ {{ formatarValor(contrato.valor) }}</p>
+          
           <p>
             <strong>Situação:</strong>
             <span :class="`situacao-${contrato.situacao.toLowerCase()}`">{{ contrato.situacao }}</span>

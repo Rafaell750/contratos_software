@@ -1,5 +1,5 @@
-# Usa uma imagem base do Node.js
-FROM node:16 as build-stage
+# Usa uma imagem base do Node.js (versão 18)
+FROM node:18-alpine as build-stage
 
 # Define o diretório de trabalho
 WORKDIR /app
