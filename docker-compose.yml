@@ -9,6 +9,8 @@ services:
       - "8080:8080"  # Mapeia a porta 8080 do container para a porta 8080 da máquina
     container_name: frontend
     restart: always
+    depends_on:
+      - backend  # Garante que o backend seja iniciado antes do frontend
 
   backend:
     build:
@@ -18,3 +20,5 @@ services:
       - "5001:5001"  # Mapeia a porta 5001 do container para a porta 5001 da máquina
     container_name: backend
     restart: always
+    environment:
+      - POUCHDB_HOST=http://backend:5001  # Configura o host do PouchDB

@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { getContratos } from '../services/pouchdb';
+import { getContratos } from '../services/api';
 
 export default {
   data() {

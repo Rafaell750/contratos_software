@@ -1,0 +1,3 @@
+# Ignorar arquivos do PouchDB
+backend/contratos/*
+!backend/contratos/.gitkeep

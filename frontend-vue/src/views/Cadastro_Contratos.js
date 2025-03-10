@@ -1,5 +1,5 @@
 // src/views/Cadastro_Contratos.js
-import { addContrato, getContratos, deleteContrato } from '../services/pouchdb';
+import { addContrato, getContratos, deleteContrato } from '../services/api';
 
 export default {
   data() {

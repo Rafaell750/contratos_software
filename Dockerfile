@@ -7,7 +7,7 @@ WORKDIR /app
 # Copia os arquivos de dependência do diretório frontend-vue
 COPY ./frontend-vue/package*.json ./
 
-# Instala as dependências
+# Instala as dependências (exceto PouchDB, se já foi removido)
 RUN npm install
 
 # Copia o restante do código do frontend
