@@ -12,7 +12,7 @@ services:
 
   backend:
     build:
-      context: .
+      context: .  # O contexto é o diretório raiz do projeto
       dockerfile: Dockerfile.backend
     ports:
       - "5001:5001"  # Mapeia a porta 5001 do container para a porta 5001 da máquina

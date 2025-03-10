@@ -4,17 +4,17 @@ FROM python:3.10
 # Define o diretório de trabalho
 WORKDIR /app
 
-# Copia os arquivos de dependência
-COPY requirements.txt .
+# Copia os arquivos de dependência do diretório backend
+COPY ./backend/requirements.txt .
 
 # Instala as dependências
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copia o restante do código do projeto
-COPY . .
+# Copia o restante do código do backend
+COPY ./backend .
 
 # Expõe a porta 5001 (para evitar conflito com o outro projeto)
 EXPOSE 5001
 
 # Comando para rodar o backend
-CMD ["python", "run.py"]  # Substitua "app.py" pelo arquivo principal do seu backend
+CMD ["python", "run.py"]  

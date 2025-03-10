@@ -1,7 +1,9 @@
 from flask import Flask
 
+# Cria a instância do Flask
 app = Flask(__name__)
 
-# Aqui você pode adicionar outras configurações globais, se necessário
+# Configurações e extensões do Flask podem ser adicionadas aqui
 
-from app import routes
+# Importa as rotas (se estiverem em outro arquivo, como routes.py)
+from .routes import *
