@@ -1,8 +1,9 @@
 // backend/pouchdb.js
 const PouchDB = require('pouchdb');
 
-// Cria uma instância do PouchDB
-const db = new PouchDB('contratos');
+// Usa a variável de ambiente POUCHDB_DIR, ou 'contratos' como padrão
+const dbDir = process.env.POUCHDB_DIR || 'contratos';
+const db = new PouchDB(dbDir);
 
 // Função para adicionar um contrato
 const addContrato = async (contrato) => {

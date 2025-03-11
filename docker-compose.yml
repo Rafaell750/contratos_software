@@ -1,24 +1,25 @@
 version: '3.8'
-
 services:
   frontend:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile # Seu Dockerfile do frontend
     ports:
-      - "8080:8080"  # Mapeia a porta 8080 do container para a porta 8080 da máquina
-    container_name: frontend
-    restart: always
+      - "8080:8080" # Mapeia a porta 8080 do host para a 8080 do contêiner
     depends_on:
-      - backend  # Garante que o backend seja iniciado antes do frontend
+      - backend # Garante que o backend inicie antes do frontend
 
   backend:
     build:
-      context: .  # O contexto é o diretório raiz do projeto
-      dockerfile: Dockerfile.backend
+      context: .
+      dockerfile: Dockerfile.backend  # Seu Dockerfile do backend
     ports:
-      - "3000:3000"  # Mapeia a porta 3000 do container para a porta 3000 da máquina
-    container_name: backend
-    restart: always
-    environment:
-      - POUCHDB_HOST=http://backend:3000  # Configura o host do PouchDB
+      - "3000:3000"  # Mapeia a porta 3000 (opcional, para acesso externo)
+    volumes:
+      - pouchdb_data:/app/data #  <-- MUITO IMPORTANTE: Persistência dos dados
+    environment: # <-- Configura a variável de ambiente
+        - POUCHDB_DIR=/app/data
+
+
+volumes: # <-- Define o volume nomeado
+    pouchdb_data:
