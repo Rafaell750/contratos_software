@@ -17,8 +17,8 @@ services:
       context: .  # O contexto é o diretório raiz do projeto
       dockerfile: Dockerfile.backend
     ports:
-      - "5001:5001"  # Mapeia a porta 5001 do container para a porta 5001 da máquina
+      - "3000:3000"  # Mapeia a porta 3000 do container para a porta 3000 da máquina
     container_name: backend
     restart: always
     environment:
-      - POUCHDB_HOST=http://backend:5001  # Configura o host do PouchDB
+      - POUCHDB_HOST=http://backend:3000  # Configura o host do PouchDB

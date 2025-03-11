@@ -1,23 +1,21 @@
-# Usa uma imagem base do Python (versão 3.10)
-FROM python:3.10
+# Dockerfile.backend
+# Usa uma imagem base do Node.js (versão 18)
+FROM node:18
 
 # Define o diretório de trabalho
 WORKDIR /app
 
 # Copia os arquivos de dependência do diretório backend
-COPY ./backend/requirements.txt .
+COPY ./backend/package*.json ./
 
 # Instala as dependências
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Instala o PouchDB (se necessário)
-RUN pip install pouchdb
+RUN npm install
 
 # Copia o restante do código do backend
 COPY ./backend .
 
-# Expõe a porta 5001 (para evitar conflito com o outro projeto)
-EXPOSE 5001
+# Expõe a porta 3000 (porta usada no server.js)
+EXPOSE 3000
 
 # Comando para rodar o backend
-CMD ["python", "run.py"]
+CMD ["node", "server.js"]
