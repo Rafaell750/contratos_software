@@ -1,8 +1,8 @@
 <template>
   <div id="app">
-    <nav>
+    <nav v-if="!isLoginPage">
       <router-link to="/painel-informacoes">Painel de Informações</router-link> |
-      <router-link to="/cadastro-contratos">Contratos</router-link> 
+      <router-link to="/cadastro-contratos">Contratos</router-link>
     </nav>
     <router-view />
   </div>
@@ -11,6 +11,11 @@
 <script>
 export default {
   name: 'App',
+  computed: {
+    isLoginPage() {
+      return this.$route.path === '/login'; // Verifica se a rota atual é a tela de login
+    },
+  },
 };
 </script>
 

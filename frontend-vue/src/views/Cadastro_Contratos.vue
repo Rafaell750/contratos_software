@@ -115,8 +115,6 @@
           </div>
         </div>
 
-
-
         <div class="card-body">
           <p><strong>Responsável:</strong> {{ contrato.responsavel }}</p>
           <p><strong>Empresas:</strong> {{ contrato.empresas }}</p>
@@ -131,10 +129,11 @@
             </span>
           </p>
 
-          
           <p>
             <strong>Situação:</strong>
-            <span :class="`situacao-${contrato.situacao.toLowerCase()}`">{{ contrato.situacao }}</span>
+            <span :class="`situacao-${contrato.situacao?.toLowerCase() || ''}`">
+              {{ contrato.situacao || 'Sem situação' }}
+            </span>
           </p>
           <p><strong>Observações:</strong> {{ contrato.observacoes }}</p>
         </div>

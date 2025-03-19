@@ -23,3 +23,7 @@ services:
 
 volumes: # <-- Define o volume nomeado
     pouchdb_data:
+
+networks:  # Define a rede personalizada
+  app-network:
+    driver: bridge  # Geralmente o bridge é o padrão, mas é bom explicitar

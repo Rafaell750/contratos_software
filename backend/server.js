@@ -1,11 +1,12 @@
 // backend/server.js
 const express = require('express');
 const { addContrato, getContratos, updateContrato, deleteContrato } = require('./pouchdb');
+const cors = require('cors');
+const authRoutes = require('./routes/auth');
+const authMiddleware = require('./middleware/authMiddleware');
 
 const app = express();
 app.use(express.json());
-
-const cors = require('cors');
 app.use(cors({ origin: '*' }));
 
 // Rota para adicionar um contrato
@@ -49,6 +50,13 @@ app.delete('/contratos/:id', async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+});
+
+app.use('/auth', authRoutes);
+
+// Rota protegida de exemplo
+app.get('/protected', authMiddleware, (req, res) => {
+  res.json({ message: 'This is a protected route', user: req.user });
 });
 
 // Inicia o servidor na porta 3000
