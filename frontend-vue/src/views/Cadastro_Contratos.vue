@@ -1,3 +1,4 @@
+<!-- frontend-vue/views/Cadastro_Contratos.vue -->
 <script src="./Cadastro_Contratos.js"></script>
 <style src="./Cadastro_Contratos.css" scoped></style>
 
@@ -99,7 +100,7 @@
     <h2 class="subtitulo">Lista de Contratos:</h2>
     <div class="lista-contratos">
       <div v-for="contrato in contratos" :key="contrato._id" class="card-contrato">
-        <div class="card-header" :class="`status-${calcularStatus(contrato.terminoPrazo).toLowerCase().replace(/ /g, '-')}`">
+        <div class="card-header" :class="`status-${(calcularStatus(contrato.terminoPrazo) || '').toLowerCase().replace(/ /g, '-')}`">
           <h3>Nº do Contrato: {{ contrato.numeroContrato }}</h3>
 
           <!-- Botão de três pontinhos -->
@@ -126,15 +127,17 @@
           <p>
             <strong>Término do Prazo:</strong> 
             {{ formatarData(contrato.terminoPrazo) }}
-            <span :class="`status-${calcularStatus(contrato.terminoPrazo).toLowerCase().replace(/ /g, '-')}`">
-              ({{ calcularStatus(contrato.terminoPrazo) }})
+            <span :class="`status-${(calcularStatus(contrato.terminoPrazo) || '').toLowerCase().replace(/ /g, '-')}`">
+            ({{ calcularStatus(contrato.terminoPrazo) || '' }})
             </span>
           </p>
 
           
           <p>
             <strong>Situação:</strong>
-            <span :class="`situacao-${contrato.situacao.toLowerCase()}`">{{ contrato.situacao }}</span>
+            <span :class="`situacao-${(contrato.situacao || '').toLowerCase()}`">
+              {{ contrato.situacao || '-' }}
+            </span>
           </p>
           <p><strong>Observações:</strong> {{ contrato.observacoes }}</p>
         </div>

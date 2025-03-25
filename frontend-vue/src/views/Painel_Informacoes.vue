@@ -1,3 +1,4 @@
+<!-- frontend-vue/views/Painel_informações.vue -->
 <template>
   <div class="container">
     <h1 class="titulo">Painel de Informações</h1>

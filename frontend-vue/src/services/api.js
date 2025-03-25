@@ -1,35 +1,54 @@
 // frontend-vue/services/api.js
 
-const BASE_URL = 'http://backend:3000'; // Usar o nome do serviço do backend
+const BASE_URL = 'http://localhost:3000'; // Usar o nome do serviço do backend
+//const BASE_URL = 'http://172.16.21.12:3000'; // Para o servidor Docker
 
-export const addContrato = async (contrato) => {
-    const response = await fetch(`${BASE_URL}/contratos`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(contrato),
+// Função auxiliar para obter o token do usuário logado
+function getAuthToken() {
+    const user = JSON.parse(localStorage.getItem('user'));
+    return user?.token;
+  }
+  
+  // Função para fazer requisições autenticadas
+  async function fetchAuth(url, options = {}) {
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        ...options.headers,
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${getAuthToken()}`
+      },
+      credentials: 'include'
     });
+  
+    if (!response.ok) {
+      throw new Error(`Erro HTTP: ${response.status}`);
+    }
+  
     return response.json();
-};
-
-export const getContratos = async () => {
-    const response = await fetch(`${BASE_URL}/contratos`);
-    return response.json();
-};
-
-export const updateContrato = async (contrato) => {
-    const response = await fetch(`${BASE_URL}/contratos/${contrato._id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(contrato),
+  }
+  
+  export const addContrato = async (contrato) => {
+    return fetchAuth(`${BASE_URL}/contratos`, {
+      method: 'POST',
+      body: JSON.stringify(contrato)
     });
-    return response.json();
-};
-
-export const deleteContrato = async (contrato) => {
-    const response = await fetch(`${BASE_URL}/contratos/${contrato._id}`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(contrato),
+  };
+  
+  export const getContratos = async () => {
+    return fetchAuth(`${BASE_URL}/contratos`);
+  };
+  
+  export const updateContrato = async (contrato) => {
+    return fetchAuth(`${BASE_URL}/contratos/${contrato._id}`, {
+      method: 'PUT',
+      body: JSON.stringify(contrato)
     });
-    return response.json();
-};
+  };
+  
+  export const deleteContrato = async (contrato) => {
+    return fetchAuth(`${BASE_URL}/contratos/${contrato._id}`, {
+      method: 'DELETE',
+      body: JSON.stringify(contrato)
+    });
+  };

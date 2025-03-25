@@ -4,6 +4,7 @@ import { addContrato, getContratos, deleteContrato } from '../services/api';
 export default {
   data() {
     return {
+      contratos: [],
       modalAberta: false, // Controla a visibilidade da modal de cadastro
       modalInformacaoAberta: false, // Controla a visibilidade da modal de informação
       modalConfirmacaoDeletar: false, // Nova variável para controlar a modal de confirmação
@@ -20,12 +21,19 @@ export default {
         valor: '',
         situacao: '',
         observacoes: '',
+        
       },
-      contratos: [],
+      
     };
   },
   async created() {
-    this.contratos = await getContratos();
+    try {
+      const response = await getContratos();
+      this.contratos = Array.isArray(response) ? response : [];
+    } catch (error) {
+      console.error('Erro ao carregar contratos:', error);
+      this.contratos = [];
+    }
   },
 
   mounted() {
@@ -153,6 +161,10 @@ fecharMenuAoClicarFora(event) {
   },
 
   async adicionarContrato() {
+      // Verifica se contratos é um array, se não, inicializa
+  if (!Array.isArray(this.contratos)) {
+    this.contratos = [];
+  }
     // Verifica se já existe um contrato com o mesmo número, ignorando o contrato atual (se estiver editando)
     const contratoExistente = this.contratos.find(
       contrato =>
