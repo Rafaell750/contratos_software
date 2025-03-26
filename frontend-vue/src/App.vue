@@ -2,16 +2,24 @@
 <template>
   <div id="app">
     <nav v-if="$route.path !== '/'">
-      <router-link to="/painel-informacoes">Painel de Informações</router-link> |
-      <router-link to="/cadastro-contratos">Contratos</router-link> |
-      <router-link 
-        v-if="user?.isAdmin" 
-        to="/admin/usuarios"
-      >
-        Admin
-      </router-link>
+      <div class="nav-container">
+        <div class="nav-links">
+          <router-link to="/painel-informacoes">Painel de Informações</router-link> |
+          <router-link to="/cadastro-contratos">Contratos</router-link> |
+          <router-link 
+            v-if="user?.isAdmin" 
+            to="/admin/usuarios"
+          >
+            Admin
+          </router-link>
+        </div>
+        <div class="user-info" v-if="user">
+          <span class="username">👤 {{ user.username }}</span>
+          <button @click="logout" class="logout-button">Sair</button>
+        </div>
+      </div>
     </nav>
-    <router-view />
+    <router-view @user-updated="updateUser"/>
   </div>
 </template>
 
@@ -25,10 +33,27 @@ export default {
   },
   methods: {
     logout() {
-      // Implemente sua função de logout aqui
       localStorage.removeItem('user');
+      this.user = null;
       this.$router.push('/');
+    },
+    updateUser() {
+      this.user = JSON.parse(localStorage.getItem('user')) || null;
     }
+  },
+  mounted() {
+    // Ouvir eventos de storage para detectar mudanças em outras abas
+    window.addEventListener('storage', this.handleStorageEvent);
+  },
+  beforeUnmount() {
+    // Remover o listener quando o componente for destruído
+    window.removeEventListener('storage', this.handleStorageEvent);
+  },
+  created() {
+    // Atualizar o usuário sempre que a rota mudar
+    this.$router.afterEach(() => {
+      this.updateUser();
+    });
   }
 }
 </script>
@@ -38,7 +63,7 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   text-align: center;
   color: #f2f5f8;
-  margin-top: 65px;
+  margin-top: 75px;
 }
 
 /* Estilo para a barra de navegação */
@@ -53,12 +78,25 @@ nav {
   z-index: 1000;
 }
 
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 /* Estilo para os links da navegação */
 nav a {
   font-weight: bold;
   color: white;
   text-decoration: none;
-  margin: 0 10px;
   padding: 5px 10px;
   border-radius: 4px;
   transition: background-color 0.3s ease;
@@ -73,5 +111,43 @@ nav a:hover {
 nav a.router-link-exact-active {
   background-color: rgba(255, 255, 255, 0.2);
   color: white;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.username {
+  font-weight: 600;
+  color: white;
+}
+
+.logout-button {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.logout-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Ajuste para telas pequenas */
+@media (max-width: 768px) {
+  .nav-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .nav-links, .user-info {
+    width: 100%;
+    justify-content: center;
+  }
 }
 </style>
