@@ -81,11 +81,25 @@ app.post('/usuarios', authenticate, isAdmin, (req, res) => {
 // Adiciona o middleware de autenticação a todas as rotas abaixo
 app.use(authenticate);
 
+app.get('/historico', authenticate, async (req, res) => {
+  try {
+    const stmt = db.prepare(`
+      SELECT h.*, datetime(h.createdAt, 'localtime') as createdAt_local 
+      FROM historico h
+      ORDER BY h.createdAt DESC
+    `);
+    const historico = stmt.all();
+    res.status(200).json(historico);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Rota para adicionar um contrato (agora requer autenticação)
-app.post('/contratos', async (req, res) => {
+app.post('/contratos', authenticate, async (req, res) => {
   try {
     const contrato = req.body;
-    const resultado = await addContrato(contrato);
+    const resultado = await addContrato(contrato, req.user);
     res.status(201).json(resultado);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -103,10 +117,10 @@ app.get('/contratos', async (req, res) => {
 });
 
 // Rota para atualizar um contrato (agora requer autenticação)
-app.put('/contratos/:id', async (req, res) => {
+app.put('/contratos/:id', authenticate, async (req, res) => {
   try {
     const contrato = req.body;
-    const resultado = await updateContrato(contrato);
+    const resultado = await updateContrato(contrato, req.user);
     res.status(200).json(resultado);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -114,10 +128,10 @@ app.put('/contratos/:id', async (req, res) => {
 });
 
 // Rota para deletar um contrato (agora requer autenticação)
-app.delete('/contratos/:id', async (req, res) => {
+app.delete('/contratos/:id', authenticate, async (req, res) => {
   try {
     const contrato = req.body;
-    const resultado = await deleteContrato(contrato);
+    const resultado = await deleteContrato(contrato, req.user);
     res.status(200).json(resultado);
   } catch (err) {
     res.status(500).json({ error: err.message });

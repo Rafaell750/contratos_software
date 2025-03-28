@@ -52,3 +52,7 @@ function getAuthToken() {
       body: JSON.stringify(contrato)
     });
   };
+
+  export const getHistorico = async () => {
+    return fetchAuth(`${BASE_URL}/historico`);
+  };

@@ -28,6 +28,12 @@ const routes = [
     name: 'AdminUsuarios',
     component: () => import('../views/AdminUsuarios.vue'),
     meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/historico',
+    name: 'Historico',
+    component: () => import('../views/HistoricoPage.vue'),
+    meta: { requiresAuth: true }
   }
   
   
@@ -50,7 +56,5 @@ router.beforeEach((to, from, next) => {
     next();
   }
 });
-
-
 
 export default router;

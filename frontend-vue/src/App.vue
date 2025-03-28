@@ -6,6 +6,7 @@
         <div class="nav-links">
           <router-link to="/painel-informacoes">Painel de Informações</router-link> |
           <router-link to="/cadastro-contratos">Contratos</router-link> |
+          <router-link to="/historico">Histórico</router-link> |
           <router-link 
             v-if="user?.isAdmin" 
             to="/admin/usuarios"

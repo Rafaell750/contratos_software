@@ -81,3 +81,19 @@ module.exports = {
   bcrypt,
   SALT_ROUNDS
 };
+
+// Tabela para registro de histórico
+db.prepare(`
+    CREATE TABLE IF NOT EXISTS historico (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      acao TEXT NOT NULL,
+      tabela TEXT NOT NULL,
+      registro_id TEXT,
+      usuario_id INTEGER NOT NULL,
+      usuario_nome TEXT NOT NULL,
+      dados_anteriores TEXT,
+      dados_novos TEXT,
+      createdAt TEXT DEFAULT (datetime('now', 'localtime')),
+      FOREIGN KEY(usuario_id) REFERENCES usuarios(id)
+    )
+  `).run();

@@ -31,7 +31,7 @@ function generateId() {
 }
 
 // Função para adicionar um contrato
-const addContrato = async (contrato) => {
+const addContrato = async (contrato, usuario) => {
   try {
     // Se não tiver _id, gera um novo
     if (!contrato._id) {
@@ -71,15 +71,21 @@ const addContrato = async (contrato) => {
       _rev: newRev
     });
     
-    return {
-      id: result.lastInsertRowid,
-      ok: true,
-      rev: newRev
-    };
-  } catch (error) {
-    console.error('Erro ao adicionar contrato:', error);
-    throw error;
-  }
+// Registrar no histórico
+if (usuario) {
+  const action = contrato._rev ? 'ATUALIZAR' : 'CRIAR';
+  await registrarHistorico(action, 'contratos', contrato._id, usuario, null, contrato);
+}
+
+return {
+  id: result.lastInsertRowid,
+  ok: true,
+  rev: newRev
+};
+} catch (error) {
+console.error('Erro ao adicionar contrato:', error);
+throw error;
+}
 };
 
 // Função para buscar todos os contratos
@@ -104,9 +110,14 @@ const updateContrato = async (contrato) => {
   }
 };
 
-// Função para deletar um contrato
-const deleteContrato = async (contrato) => {
+// Modifique a função deleteContrato para registrar histórico
+const deleteContrato = async (contrato, usuario) => {
   try {
+    // Registrar no histórico antes de deletar
+    if (usuario) {
+      await registrarHistorico('DELETAR', 'contratos', contrato._id, usuario, contrato, null);
+    }
+    
     const stmt = db.prepare('DELETE FROM contratos WHERE _id = ? AND _rev = ?');
     const result = stmt.run(contrato._id, contrato._rev);
     
@@ -121,5 +132,43 @@ const deleteContrato = async (contrato) => {
   }
 };
 
+// Função para registrar ações no histórico
+const registrarHistorico = async (acao, tabela, registroId, usuario, dadosAnteriores = null, dadosNovos = null) => {
+  try {
+    const stmt = db.prepare(`
+      INSERT INTO historico (acao, tabela, registro_id, usuario_id, usuario_nome, dados_anteriores, dados_novos)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `);
+    
+    stmt.run(
+      acao,
+      tabela,
+      registroId,
+      usuario.id,
+      usuario.username,
+      dadosAnteriores ? JSON.stringify(dadosAnteriores) : null,
+      dadosNovos ? JSON.stringify(dadosNovos) : null
+    );
+  } catch (error) {
+    console.error('Erro ao registrar histórico:', error);
+  }
+};
+
+// Função para buscar histórico
+const getHistorico = async () => {
+  try {
+    const stmt = db.prepare(`
+      SELECT h.*, 
+      datetime(h.createdAt, 'localtime') as createdAt_local 
+      FROM historico h
+      ORDER BY h.createdAt DESC
+    `);
+    return stmt.all();
+  } catch (error) {
+    console.error('Erro ao buscar histórico:', error);
+    return [];
+  }
+};
+
 // Exporta as funções para usar em outros lugares
-module.exports = { addContrato, getContratos, updateContrato, deleteContrato };
+module.exports = { addContrato, getContratos, updateContrato, deleteContrato, getHistorico };
