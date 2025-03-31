@@ -1,79 +1,36 @@
+<!-- frontend-vue/views/HistoricoPage.vue -->
 <template>
     <div class="historico-container">
       <h1>Histórico de Ações</h1>
       
-      <div class="filtros">
-        <div class="filtros-superiores">
-          <select v-model="filtroAcao" @change="filtrarHistorico">
-            <option value="">Todas as ações</option>
-            <option value="CRIAR">Criações</option>
-            <option value="ATUALIZAR">Atualizações</option>
-            <option value="DELETAR">Exclusões</option>
-          </select>
-          
-          <input 
-            type="text" 
-            v-model="filtroUsuario" 
-            placeholder="Filtrar por usuário"
-            @input="filtrarHistorico"
-          >
-          
-          <input 
-            type="text" 
-            v-model="filtroContrato" 
-            placeholder="Filtrar por nº contrato"
-            @input="filtrarHistorico"
-          >
-        </div>
-        
-        <div class="filtros-datas">
-          <div class="data-input">
-            <label for="dataInicio">Data inicial:</label>
-            <input 
-              type="date" 
-              id="dataInicio" 
-              v-model="filtroDataInicio"
-              @change="filtrarHistorico"
-            >
-          </div>
-          
-          <div class="data-input">
-            <label for="dataFim">Data final:</label>
-            <input 
-              type="date" 
-              id="dataFim" 
-              v-model="filtroDataFim"
-              @change="filtrarHistorico"
-              :max="maxDate"
-            >
-          </div>
-          
-          <button 
-            class="botao-limpar"
-            @click="limparFiltrosDatas"
-          >
-            Limpar datas
-          </button>
-        </div>
-      </div>
+      <FiltrosComponent 
+        ref="filtros"
+        :config="{
+            filtroAcao: true,
+            filtroUsuario: true,
+            filtroContrato: true,
+            filtroData: true
+        }"
+        @filtrar="filtrarHistorico"
+        />
       
       <div class="historico-list">
         <div v-if="carregando" class="carregando">Carregando...</div>
-        
-        <div v-if="!carregando && historicoPaginado.length === 0" class="sem-registros">
-          Nenhum registro encontrado
-        </div>
-        
-        <div 
-          v-for="item in historicoPaginado" 
-          :key="item.id" 
-          class="historico-item"
-          :class="{
-            'criacao': item.acao === 'CRIAR',
-            'atualizacao': item.acao === 'ATUALIZAR',
-            'exclusao': item.acao === 'DELETAR'
-          }"
-        >
+      
+      <div v-if="!carregando && historicoPaginado.length === 0" class="sem-registros">
+        Nenhum registro encontrado
+      </div>
+      
+      <div 
+        v-for="item in historicoPaginado" 
+        :key="item.id" 
+        class="historico-item"
+        :class="{
+          'criacao': item.acao === 'CRIAR',
+          'atualizacao': item.acao === 'ATUALIZAR',
+          'exclusao': item.acao === 'DELETAR'
+        }"
+      >
           <div class="historico-grid">
             <div class="historico-cabecalho">
               <span class="acao">{{ formatarAcao(item.acao) }}</span>
@@ -120,93 +77,91 @@
         </div>
 
         <div v-if="totalPaginas > 1" class="paginacao">
-          <button 
-            v-for="pagina in totalPaginas" 
-            :key="pagina"
-            @click="irParaPagina(pagina)"
-            :class="{ 'pagina-ativa': pagina === paginaAtual }"
-            class="botao-pagina"
-          >
-            {{ pagina }}
-          </button>
-        </div>
+        <button 
+          v-for="pagina in totalPaginas" 
+          :key="pagina"
+          @click="irParaPagina(pagina)"
+          :class="{ 'pagina-ativa': pagina === paginaAtual }"
+          class="botao-pagina"
+        >
+          {{ pagina }}
+        </button>
       </div>
     </div>
-  </template>
+  </div>
+</template>
   
-  <script>
-  import { getHistorico } from '../services/api';
-  
-  export default {
-    data() {
-      return {
-        historico: [],
-        historicoFiltrado: [],
-        historicoPaginado: [],
-        carregando: true,
-        filtroAcao: '',
-        filtroUsuario: '',
-        filtroContrato: '',
-        filtroDataInicio: '',
-        filtroDataFim: '',
-        detalhesVisiveis: {},
-        paginaAtual: 1,
-        itensPorPagina: 10
-      };
-    },
-    computed: {
-      totalPaginas() {
-        return Math.ceil(this.historicoFiltrado.length / this.itensPorPagina);
-      },
-      maxDate() {
-        return new Date().toISOString().split('T')[0];
+<script>
+import { getHistorico } from '../services/api';
+import FiltrosComponent from './FiltrosComponent.vue';
+
+export default {
+  components: {
+    FiltrosComponent
+  },
+  data() {
+    return {
+      historico: [],
+      historicoFiltrado: [],
+      historicoPaginado: [],
+      carregando: true,
+      paginaAtual: 1,
+      itensPorPagina: 10,
+      detalhesVisiveis: {}
+    };
+  },
+  computed: {
+    totalPaginas() {
+      return Math.ceil(this.historicoFiltrado.length / this.itensPorPagina);
+    }
+  },
+  async created() {
+    await this.carregarHistorico();
+  },
+  methods: {
+    async carregarHistorico() {
+      try {
+        this.carregando = true;
+        this.historico = await getHistorico();
+        this.filtrarHistorico();
+      } catch (error) {
+        console.error('Erro ao carregar histórico:', error);
+      } finally {
+        this.carregando = false;
       }
     },
-    async created() {
-      await this.carregarHistorico();
-    },
-    methods: {
-      async carregarHistorico() {
-        try {
-          this.carregando = true;
-          this.historico = await getHistorico();
-          this.filtrarHistorico();
-        } catch (error) {
-          console.error('Erro ao carregar histórico:', error);
-        } finally {
-          this.carregando = false;
-        }
-      },
-      filtrarHistorico() {
-        this.historicoFiltrado = this.historico.filter(item => {
-          const passaFiltroAcao = !this.filtroAcao || item.acao === this.filtroAcao;
-          const passaFiltroUsuario = !this.filtroUsuario || 
-            item.usuario_nome.toLowerCase().includes(this.filtroUsuario.toLowerCase());
-          const passaFiltroContrato = !this.filtroContrato || 
-            this.obterNumeroContrato(item.dados_novos || item.dados_anteriores)
-              .toLowerCase()
-              .includes(this.filtroContrato.toLowerCase());
-          
-          // Filtro por data
-          let passaFiltroData = true;
-          if (this.filtroDataInicio || this.filtroDataFim) {
-            const dataItem = new Date(item.createdAt_local || item.createdAt);
-            const dataItemISO = dataItem.toISOString().split('T')[0];
-            
-            if (this.filtroDataInicio && dataItemISO < this.filtroDataInicio) {
-              passaFiltroData = false;
-            }
-            if (this.filtroDataFim && dataItemISO > this.filtroDataFim) {
-              passaFiltroData = false;
-            }
-          }
-          
-          return passaFiltroAcao && passaFiltroUsuario && passaFiltroContrato && passaFiltroData;
-        });
+    filtrarHistorico() {
+      const filtros = this.$refs.filtros.getFiltros();
+      
+      this.historicoFiltrado = this.historico.filter(item => {
+        const passaFiltroAcao = !filtros.acao || item.acao === filtros.acao;
+        const passaFiltroUsuario = !filtros.usuario || 
+          item.usuario_nome.toLowerCase().includes(filtros.usuario.toLowerCase());
+        const passaFiltroContrato = !filtros.contrato || 
+          this.obterNumeroContrato(item.dados_novos || item.dados_anteriores)
+            .toLowerCase()
+            .includes(filtros.contrato.toLowerCase());
         
-        this.paginaAtual = 1;
-        this.atualizarPaginacao();
-      },
+        // Filtro por data
+        let passaFiltroData = true;
+        if (filtros.dataInicio || filtros.dataFim) {
+          const dataItem = new Date(item.createdAt_local || item.createdAt);
+          const dataItemISO = dataItem.toISOString().split('T')[0];
+          
+          if (filtros.dataInicio && dataItemISO < filtros.dataInicio) {
+            passaFiltroData = false;
+          }
+          if (filtros.dataFim && dataItemISO > filtros.dataFim) {
+            passaFiltroData = false;
+          }
+        }
+        
+        return passaFiltroAcao && passaFiltroUsuario && passaFiltroContrato && passaFiltroData;
+      });
+      
+      this.paginaAtual = 1;
+      this.atualizarPaginacao();
+    },
       limparFiltrosDatas() {
         this.filtroDataInicio = '';
         this.filtroDataFim = '';
@@ -323,71 +278,6 @@
     color: #333;
     text-align: center;
     margin-bottom: 20px;
-  }
-  
-  .filtros {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-bottom: 20px;
-  }
-  
-  .filtros-superiores {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-  
-  .filtros-datas {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-  
-  .data-input {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  
-  .data-input label {
-    font-size: 0.9rem;
-    color: #555;
-    white-space: nowrap;
-  }
-  
-  .filtros select, 
-  .filtros input,
-  .filtros input[type="date"] {
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    transition: border-color 0.3s, box-shadow 0.3s;
-  }
-  
-  .filtros select:focus, 
-  .filtros input:focus,
-  .filtros input[type="date"]:focus {
-    border-color: #42b983;
-    box-shadow: 0 0 5px rgba(66, 185, 131, 0.5);
-    outline: none;
-  }
-  
-  .botao-limpar {
-    padding: 8px 12px;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: background-color 0.3s;
-  }
-  
-  .botao-limpar:hover {
-    background-color: #e0e0e0;
   }
   
   .historico-list {

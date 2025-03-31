@@ -1,3 +1,4 @@
+<!-- frontend-vue/views/LoginPage.vue -->
 <template>
     <div class="login-wrapper">
       <div class="login-container">

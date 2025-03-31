@@ -6,15 +6,17 @@
   <div class="container">
     <h1 class="titulo">Contratos</h1>
 
-    <!-- Botão para abrir a modal -->
+
+
+    <!-- O restante do template permanece igual -->
     <button class="botao-cadastrar" @click="abrirModal">Cadastrar Contrato</button>
 
     <!-- Modal de Cadastro -->
     <div v-if="modalAberta" class="modal" :style="{ zIndex: modalAberta ? 1000 : 0 }">
       <div class="modal-conteudo">
-        <span class="fechar" @click="fecharModal">&times;</span>
+        <span class="fechar" @click="fecharModal">×</span>
         <h2 class="modal-titulo">Cadastrar novo Contrato</h2>
-        
+
         <!-- Formulário de Cadastro -->
         <form @submit.prevent="adicionarContrato" class="formulario">
           <div class="campo">
@@ -67,7 +69,7 @@
     <!-- Modal de Informação -->
     <div v-if="modalInformacaoAberta" class="modal" :style="{ zIndex: modalInformacaoAberta ? 1001 : 0 }">
       <div class="modal-conteudo modal-informacao">
-        <span class="fechar" @click="fecharModalInformacao">&times;</span>
+        <span class="fechar" @click="fecharModalInformacao">×</span>
         <h2 class="modal-titulo">Informações Adicionais</h2>
         <!-- Formulário de Informação -->
         <form @submit.prevent="salvarInformacao" class="formulario">
@@ -86,7 +88,7 @@
     <!-- Modal de Confirmação de Deletar -->
       <div v-if="modalConfirmacaoDeletar" class="modal modal-confirmacao">
         <div class="modal-conteudo">
-          <span class="fechar" @click="fecharModalConfirmacaoDeletar">&times;</span>
+          <span class="fechar" @click="fecharModalConfirmacaoDeletar">×</span>
           <h2 class="modal-titulo">Confirmar Remoção</h2>
           <p>Tem certeza que deseja deletar este contrato?</p>
           <div class="botoes">
@@ -94,12 +96,26 @@
             <button @click="fecharModalConfirmacaoDeletar" class="botao-cancelar">Cancelar</button>
           </div>
         </div>
-      </div>   
+      </div>
 
     <!-- Lista de Contratos Cadastrados -->
     <h2 class="subtitulo">Lista de Contratos:</h2>
+
+        <!-- Adicionando os filtros -->
+        <FiltrosComponent
+        ref="filtros"
+        :config="{
+          filtroSituacao: true,
+          filtroUsuario: { placeholder: 'Filtrar por responsável' },
+          filtroContrato: true,
+          filtroEmpresa: true, /* Habilitar o novo filtro */
+          filtroData: true
+        }"
+        @filtrar="filtrarContratos"
+      />
+
     <div class="lista-contratos">
-      <div v-for="contrato in contratos" :key="contrato._id" class="card-contrato">
+      <div v-for="contrato in contratosFiltrados" :key="contrato._id" class="card-contrato">
         <div class="card-header" :class="`status-${(calcularStatus(contrato.terminoPrazo) || '').toLowerCase().replace(/ /g, '-')}`">
           <h3>Nº do Contrato: {{ contrato.numeroContrato }}</h3>
 
@@ -116,8 +132,6 @@
           </div>
         </div>
 
-
-
         <div class="card-body">
           <p><strong>Responsável:</strong> {{ contrato.responsavel }}</p>
           <p><strong>Empresas:</strong> {{ contrato.empresas }}</p>
@@ -125,14 +139,14 @@
           <p><strong>Início do Prazo:</strong> {{ formatarData(contrato.inicioPrazo) }}</p>
 
           <p>
-            <strong>Término do Prazo:</strong> 
+            <strong>Término do Prazo:</strong>
             {{ formatarData(contrato.terminoPrazo) }}
             <span :class="`status-${(calcularStatus(contrato.terminoPrazo) || '').toLowerCase().replace(/ /g, '-')}`">
             ({{ calcularStatus(contrato.terminoPrazo) || '' }})
             </span>
           </p>
 
-          
+
           <p>
             <strong>Situação:</strong>
             <span :class="`situacao-${(contrato.situacao || '').toLowerCase()}`">
@@ -142,8 +156,13 @@
           <p><strong>Observações:</strong> {{ contrato.observacoes }}</p>
         </div>
       </div>
+       <!-- Mensagem se não houver contratos filtrados -->
+      <div v-if="contratosFiltrados.length === 0 && contratos.length > 0" class="sem-resultados">
+        Nenhum contrato encontrado com os filtros aplicados.
+      </div>
+      <div v-if="contratos.length === 0" class="sem-resultados">
+        Ainda não há contratos cadastrados.
+      </div>
     </div>
   </div>
 </template>
-
-
