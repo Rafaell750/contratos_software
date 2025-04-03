@@ -59,6 +59,7 @@
       const criarUsuario = async () => {
         try {
           await axios.post('http://localhost:3000/usuarios', newUser.value, { 
+          //await axios.post('http://172.16.21.12:3000/usuarios', newUser.value, {
             withCredentials: true 
           });
           message.value = 'Usuário criado com sucesso!';

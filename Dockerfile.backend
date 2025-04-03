@@ -1,12 +1,13 @@
 # Dockerfile.backend
-# Usa uma imagem base do Node.js (versão 18)
 FROM node:18
 
 # Define o diretório de trabalho
 WORKDIR /app
 
-# Cria o diretório para o banco de dados
-RUN mkdir -p /app/data
+# Instala dependências necessárias para o SQLite3
+RUN apt-get update && apt-get install -y \
+    sqlite3 \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copia os arquivos de dependência do diretório backend
 COPY ./backend/package*.json ./

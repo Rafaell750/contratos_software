@@ -3,23 +3,22 @@ services:
   frontend:
     build:
       context: .
-      dockerfile: Dockerfile # Seu Dockerfile do frontend
+      dockerfile: Dockerfile
     ports:
-      - "8080:8080" # Mapeia a porta 8080 do host para a 8080 do contêiner
+      - "8080:8080"
     depends_on:
-      - backend # Garante que o backend inicie antes do frontend
+      - backend
 
   backend:
     build:
       context: .
-      dockerfile: Dockerfile.backend  # Seu Dockerfile do backend
+      dockerfile: Dockerfile.backend
     ports:
-      - "3000:3000"  # Mapeia a porta 3000 (opcional, para acesso externo)
+      - "3000:3000"
     volumes:
-      - pouchdb_data:/app/data #  <-- MUITO IMPORTANTE: Persistência dos dados
-    environment: # <-- Configura a variável de ambiente
-        - POUCHDB_DIR=/app/data
+      - sqlite_data:/app
+    environment:
+      - NODE_ENV=production
 
-
-volumes: # <-- Define o volume nomeado
-    pouchdb_data:
+volumes:
+  sqlite_data:
