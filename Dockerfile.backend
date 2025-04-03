@@ -1,23 +1,28 @@
 # Dockerfile.backend
 FROM node:18
 
-# Define o diretório de trabalho
-WORKDIR /app
-
-# Instala dependências necessárias para o SQLite3
+# Instala dependências necessárias para compilar o better-sqlite3
 RUN apt-get update && apt-get install -y \
+    python3 \
+    make \
+    g++ \
     sqlite3 \
     && rm -rf /var/lib/apt/lists/*
 
-# Copia os arquivos de dependência do diretório backend
+# Define o diretório de trabalho
+WORKDIR /app
+
+# Copia apenas os arquivos de dependência (package.json e package-lock.json)
 COPY ./backend/package*.json ./
+
+# Instala as dependências (compila o better-sqlite3 dentro do container)
 RUN npm install
 
-# Copia o restante do código do backend
+# Copia o resto do código do backend
 COPY ./backend .
 
 # Expõe a porta 3000
 EXPOSE 3000
 
-# Comando para rodar o backend
+# Inicia o servidor
 CMD ["node", "server.js"]

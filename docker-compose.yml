@@ -19,6 +19,7 @@ services:
       - sqlite_data:/app
     environment:
       - NODE_ENV=production
+      - npm_config_build_from_source=true  # Força compilação dentro do container
 
 volumes:
   sqlite_data:
