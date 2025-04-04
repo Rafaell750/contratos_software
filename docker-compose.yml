@@ -1,9 +1,10 @@
-version: '3.8'
+# docker-compose.yml
+
 services:
   frontend:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile # Certifique-se que este arquivo existe e é o do frontend
     ports:
       - "8080:8080"
     depends_on:
@@ -16,10 +17,9 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - sqlite_data:/app
-    environment:
-      - NODE_ENV=production
-      - npm_config_build_from_source=true  # Força compilação dentro do container
+      # MANTIDO: Volume nomeado para persistir os dados do SQLite
+      - sqlite_data:/app/data
 
 volumes:
   sqlite_data:
+    # driver: local # Padrão, mas pode ser explícito

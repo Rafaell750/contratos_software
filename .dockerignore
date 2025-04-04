@@ -1,5 +1,17 @@
-node_modules/
-.git/
+# Ignorar dependências do Node baixadas localmente
+node_modules
+*/node_modules
+
+# Ignorar logs e arquivos de build local
+npm-debug.log*
+logs
+*.log
+dist
+build
+
+# Arquivos do sistema operacional e IDE
 .DS_Store
-dist/
-.env
+Thumbs.db
+.idea
+.vscode
+*.swp

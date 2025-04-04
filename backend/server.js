@@ -14,15 +14,15 @@ const app = express();
 // Middlewares
 app.use(cors({
   origin: 'http://localhost:8080', // Altere para o endereço do seu frontend
-  origin: 'http://172.16.21.12:8080',
+  //origin: 'http://172.16.21.12:8080',
   credentials: true // Permite enviar cookies
 }));
 app.use(cookieParser()); // Habilita o parsing de cookies
 app.use(express.json());
 
-// ======================================
-// NOVAS ROTAS DE AUTENTICAÇÃO (ADICIONE ESTA SEÇÃO)
-// ======================================
+// ============================
+// NOVAS ROTAS DE AUTENTICAÇÃO 
+// ============================
 
 // Rota de login ajustada para HTTP local
 app.post('/login', async (req, res) => {

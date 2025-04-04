@@ -458,3 +458,21 @@ textarea {
 .modal-confirmacao {
   z-index: 1002; /* Maior que o conteúdo da modal e o overlay */
 }
+
+.sem-resultados {
+  /* FAZ A DIV OCUPAR TODA A LARGURA DO GRID PAI */
+  grid-column: 1 / -1; /* Começa na linha 1 e vai até a última linha (-1) */
+
+  /* AGORA CENTRALIZA O TEXTO DENTRO DESSA DIV LARGA */
+  text-align: center;
+
+  /* Estilos adicionais (cor, espaçamento, etc.) */
+  padding: 20px; /* Um pouco mais de espaço vertical pode ficar bom */
+  margin-top: 20px;
+  margin-bottom: 20px;
+  color: rgb(63, 60, 60); /* Cor vermelha como você queria */
+  font-weight: bold; /* Opcional: para dar mais destaque */
+  background-color: #f8d7da; /* Opcional: fundo vermelho claro para destacar */
+  border: 1px solid #f5c6cb;   /* Opcional: borda vermelha clara */
+  border-radius: 4px; /* Opcional: para combinar com os cards */
+}

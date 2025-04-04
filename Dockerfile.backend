@@ -1,28 +1,36 @@
 # Dockerfile.backend
-FROM node:18
 
-# Instala dependências necessárias para compilar o better-sqlite3
-RUN apt-get update && apt-get install -y \
+FROM node:18-alpine
+
+# 1. Instala dependências de build e runtime
+#    ADICIONADO: sqlite-dev para os headers C do SQLite
+RUN apk add --no-cache \
     python3 \
     make \
     g++ \
-    sqlite3 \
-    && rm -rf /var/lib/apt/lists/*
+    sqlite \
+    sqlite-dev \
+    py3-pip
 
-# Define o diretório de trabalho
+# 2. Configura ambiente para node-gyp (se necessário, mas npm geralmente lida com isso)
+ENV npm_config_python=/usr/bin/python3 
+
 WORKDIR /app
 
-# Copia apenas os arquivos de dependência (package.json e package-lock.json)
+# 3. Copia apenas package.json primeiro para cache de dependências
 COPY ./backend/package*.json ./
 
-# Instala as dependências (compila o better-sqlite3 dentro do container)
-RUN npm install
+# 4. Instala dependências com flags específicas para SQLite
+#    --build-from-source garante que ele compile usando as libs do Alpine
+#    --sqlite=/usr aponta para onde o sqlite-dev instalou as libs/headers
+#    --python=/usr/bin/python3 especifica a versão correta do python
+RUN npm install --build-from-source \
+    --sqlite_libname=sqlite3 \
+    --sqlite=/usr \
+    --python=/usr/bin/python3
 
-# Copia o resto do código do backend
+# 5. Copia o restante da aplicação DEPOIS do npm install
 COPY ./backend .
 
-# Expõe a porta 3000
 EXPOSE 3000
-
-# Inicia o servidor
 CMD ["node", "server.js"]
