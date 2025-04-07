@@ -4,8 +4,7 @@
   "description": "Backend para o projeto de contratos",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "install": "node-gyp rebuild --python=/usr/bin/python"
+    "start": "node server.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
