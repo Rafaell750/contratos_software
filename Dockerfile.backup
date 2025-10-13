@@ -1,0 +1,17 @@
+FROM alpine:latest
+
+# Instala o cliente do SQLite (útil para futuras verificações) e o cron
+RUN apk add --no-cache sqlite dcron
+
+# Cria o diretório para os scripts de backup
+WORKDIR /scripts
+COPY backup.sh .
+
+# Dá permissão de execução para o script
+RUN chmod +x backup.sh
+
+# Copia a configuração do cron (vamos criar este arquivo no próximo passo)
+COPY crontab /etc/crontabs/root
+
+# Define o comando para iniciar o serviço de cron em primeiro plano
+CMD ["crond", "-f"]

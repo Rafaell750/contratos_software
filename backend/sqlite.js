@@ -1,8 +1,9 @@
 // backend/sqlite.js
+const path = require('path');
 const Database = require('better-sqlite3');
 
-// Configuração do banco de dados
-const db = new Database('contratos.db');
+const dbPath = path.join('/app/data', 'contratos.db');
+const db = new Database(dbPath);
 
 // Inicializa o banco de dados com a tabela de contratos
 db.prepare(`

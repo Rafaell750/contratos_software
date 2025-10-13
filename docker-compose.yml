@@ -20,6 +20,18 @@ services:
       # MANTIDO: Volume nomeado para persistir os dados do SQLite
       - sqlite_data:/app/data
 
+  backup:
+    build:
+      context: .
+      dockerfile: Dockerfile.backup
+    volumes:
+      # Monta o mesmo volume do banco de dados (apenas para leitura)
+      - sqlite_data:/data:ro
+      # Monta a pasta de backups do seu PC dentro do container
+      - C:\BackupsDocker\ContratosSoftware:/backups
+    depends_on:
+      - backend
+
 volumes:
   sqlite_data:
     # driver: local # Padrão, mas pode ser explícito

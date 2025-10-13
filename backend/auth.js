@@ -1,8 +1,11 @@
 // backend/auth.js
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const path = require('path');
 const Database = require('better-sqlite3');
-const db = new Database('contratos.db');
+
+const dbPath = path.join('/app/data', 'contratos.db');
+const db = new Database(dbPath);
 
 // Configurações
 const JWT_SECRET = 'sua_chave_secreta_super_forte_123!@#';
